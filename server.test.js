@@ -100,7 +100,29 @@ describe("server", () => {
       };
       const res = await testServer.post("/games").send(game);
       const newGame = JSON.parse(res.text);
-      return testServer.get(`/games/1`).expect(newGame);
+      return testServer.get(`/games/${newGame.id}`).expect(newGame);
+    });
+  });
+
+  describe("DELETE /games/:id endpoint", () => {
+    it("If game not found returns status 404", () => {
+      return testServer.get("/games/10").expect(404);
+    });
+    it("If game found return 204 and delete the game", async () => {
+      const game = {
+        title: "Megaman",
+        genre: "Action",
+        releaseYear: 1990
+      };
+      const res = await testServer.post("/games").send(game);
+      const newGame = JSON.parse(res.text);
+
+      const delRes = await testServer.delete(`/games/${newGame.id}`);
+      expect(delRes.status).toBe(204);
+
+      const resGet = await testServer.get("/games");
+      const games = JSON.parse(resGet.text);
+      expect(games.length).toBe(0);
     });
   });
 });

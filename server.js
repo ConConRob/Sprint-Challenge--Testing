@@ -2,7 +2,7 @@ const express = require("express");
 const server = express();
 server.use(express.json());
 
-const games = [];
+let games = [];
 const id = 1;
 server.post("/games", (req, res) => {
   const { title, genre, releaseYear } = req.body;
@@ -27,6 +27,16 @@ server.get("/games/:id", (req, res) => {
   const game = games.find(game => game.id === req.params.id * 1);
   if (game) {
     res.status(200).json(game);
+  } else {
+    res.sendStatus(404);
+  }
+});
+
+server.delete("/games/:id", (req, res) => {
+  const newGames = games.filter(game => game.id !== req.params.id * 1);
+  if (newGames.length < games.length) {
+    games = newGames;
+    res.sendStatus(204);
   } else {
     res.sendStatus(404);
   }
