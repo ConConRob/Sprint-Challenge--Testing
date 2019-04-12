@@ -1,7 +1,7 @@
 const server = require("./server");
 const request = require("supertest");
 
-const testServer = request(server);
+let testServer = request(server);
 //  {
 //     title: 'Pacman', // required
 //     genre: 'Arcade', // required
@@ -12,13 +12,20 @@ describe("server", () => {
     it("returns a 422 when the body does not have all required data", () => {
       return testServer
         .post("/games")
-        .send({ title: "Megaman", releaseYear: 1990 })
+        .send({
+          title: "Megaman",
+          releaseYear: 1990
+        })
         .expect(422);
     });
     it("posts and returns the new game when sent all required data", () => {
       return testServer
         .post("/games")
-        .send({ title: "Megaman", genre: "Action", releaseYear: 1990 })
+        .send({
+          title: "Megaman",
+          genre: "Action",
+          releaseYear: 1990
+        })
         .expect({
           title: "Megaman",
           genre: "Action",
@@ -29,8 +36,19 @@ describe("server", () => {
     it("Returns the right status when a game is created", () => {
       return testServer
         .post("/games")
-        .send({ title: "Megaman", genre: "Action", releaseYear: 1990 })
+        .send({
+          title: "Megaman",
+          genre: "Action",
+          releaseYear: 1990
+        })
         .expect(201);
+    });
+  });
+  // reset the server
+  testServer = request(server);
+  describe("GET /games endpoint", () => {
+    it("returns a status of 200", () => {
+      return testServer.get("/games").expect(200);
     });
   });
 });
