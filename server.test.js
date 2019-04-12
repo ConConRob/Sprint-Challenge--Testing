@@ -2,12 +2,15 @@ const server = require("./server");
 const request = require("supertest");
 
 let testServer = request(server);
-//  {
-//     title: 'Pacman', // required
-//     genre: 'Arcade', // required
-//     releaseYear: 1980 // not required
-//   }
+
 describe("server", () => {
+  beforeEach(async () => {
+    await testServer.delete("/games");
+  });
+  afterEach(async () => {
+    await testServer.delete("/games");
+  });
+
   describe("POST /games endpoint", () => {
     it("returns a 422 when the body does not have all required data", () => {
       return testServer
@@ -56,9 +59,11 @@ describe("server", () => {
         .expect(405);
     });
   });
-  it("resets the games", () => {
-    return testServer.delete("/games").expect(200);
-  });
+
+  // it("resets the games", () => {
+  //   return testServer.delete("/games").expect(200);
+  // });
+
   describe("GET /games endpoint", () => {
     it("returns a status of 200", () => {
       return testServer.get("/games").expect(200);
@@ -80,6 +85,22 @@ describe("server", () => {
       const res = await testServer.get("/games");
       const games = JSON.parse(res.text);
       expect(games.length).toBe(2);
+    });
+  });
+
+  describe("GET /games/:id endpoint", () => {
+    it("If game not found returns status 404", () => {
+      return testServer.get("/games/10").expect(404);
+    });
+    it("if game found return the game", async () => {
+      const game = {
+        title: "Megaman",
+        genre: "Action",
+        releaseYear: 1990
+      };
+      const res = await testServer.post("/games").send(game);
+      const newGame = JSON.parse(res.text);
+      return testServer.get(`/games/1`).expect(newGame);
     });
   });
 });

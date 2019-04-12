@@ -23,6 +23,15 @@ server.get("/games", (req, res) => {
   res.status(200).json(games);
 });
 
+server.get("/games/:id", (req, res) => {
+  const game = games.find(game => game.id === req.params.id * 1);
+  if (game) {
+    res.status(200).json(game);
+  } else {
+    res.sendStatus(404);
+  }
+});
+
 server.delete("/games", (req, res) => {
   games.splice(0, games.length);
   res.sendStatus(200);
