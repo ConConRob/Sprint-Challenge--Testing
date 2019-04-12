@@ -15,5 +15,16 @@ describe("server", () => {
         .send({ title: "Megaman", releaseYear: 1990 })
         .expect(422);
     });
+    it("posts and returns the new game when sent all required data", () => {
+      return testServer
+        .post("/games")
+        .send({ title: "Megaman", genre: "Action", releaseYear: 1990 })
+        .expect({
+          title: "Megaman",
+          genre: "Action",
+          releaseYear: 1990,
+          id: 1
+        });
+    });
   });
 });
