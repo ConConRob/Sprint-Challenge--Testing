@@ -26,5 +26,11 @@ describe("server", () => {
           id: 1
         });
     });
+    it("Returns the right status when a game is created", () => {
+      return testServer
+        .post("/games")
+        .send({ title: "Megaman", genre: "Action", releaseYear: 1990 })
+        .expect(201);
+    });
   });
 });
