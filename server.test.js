@@ -22,12 +22,12 @@ describe("server", () => {
       return testServer
         .post("/games")
         .send({
-          title: "Megaman",
+          title: "Megaman1",
           genre: "Action",
           releaseYear: 1990
         })
         .expect({
-          title: "Megaman",
+          title: "Megaman1",
           genre: "Action",
           releaseYear: 1990,
           id: 1
@@ -37,11 +37,23 @@ describe("server", () => {
       return testServer
         .post("/games")
         .send({
-          title: "Megaman",
+          title: "Megaman2",
           genre: "Action",
           releaseYear: 1990
         })
         .expect(201);
+    });
+    it("if game title is not unique returns status 405", async () => {
+      const game = {
+        title: "Megaman3",
+        genre: "Action",
+        releaseYear: 1990
+      };
+      await testServer.post("/games").send(game);
+      return testServer
+        .post("/games")
+        .send(game)
+        .expect(405);
     });
   });
   it("resets the games", () => {
@@ -64,7 +76,7 @@ describe("server", () => {
         releaseYear: 1990
       };
       await testServer.post("/games").send(game);
-      await testServer.post("/games").send(game);
+      await testServer.post("/games").send({ ...game, title: "Megaman2" });
       const res = await testServer.get("/games");
       const games = JSON.parse(res.text);
       expect(games.length).toBe(2);

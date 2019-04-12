@@ -9,9 +9,13 @@ server.post("/games", (req, res) => {
   if (!title || !genre) {
     res.sendStatus(422);
   } else {
-    games.push({ title, genre, releaseYear, id });
-    res.status(201).json(games.find(game => game.id === id));
-    ++id;
+    if (games.find(game => game.title === title)) {
+      res.sendStatus(405);
+    } else {
+      games.push({ title, genre, releaseYear, id });
+      res.status(201).json(games.find(game => game.id === id));
+      ++id;
+    }
   }
 });
 
