@@ -16,6 +16,11 @@ server.post("/games", (req, res) => {
 });
 
 server.get("/games", (req, res) => {
+  res.status(200).json(games);
+});
+
+server.delete("/games", (req, res) => {
+  games.splice(0, games.length);
   res.sendStatus(200);
 });
 
